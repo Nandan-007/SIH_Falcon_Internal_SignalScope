@@ -144,14 +144,13 @@ def startup_event():
     BASE_DIR = Path(__file__).resolve().parent
     weights_path = BASE_DIR / "models" / "best_model.pth"
     
-    part1_path = BASE_DIR / "models" / "best_model.part1"
-    part2_path = BASE_DIR / "models" / "best_model.part2"
-    if not MODEL_PATH.exists() and part1_path.exists() and part2_path.exists():
+    chunk_paths = [BASE_DIR / "models" / f"best_model.chunk{i}" for i in range(1, 6)]
+    if not MODEL_PATH.exists() and all(p.exists() for p in chunk_paths):
         print("Reassembling model from chunks to bypass GitHub limit...")
-        with open(part1_path, "rb") as f1, open(part2_path, "rb") as f2:
-            with open(MODEL_PATH, "wb") as out:
-                out.write(f1.read())
-                out.write(f2.read())
+        with open(MODEL_PATH, "wb") as out:
+            for p in chunk_paths:
+                with open(p, "rb") as chunk_file:
+                    out.write(chunk_file.read())
         print("Model reassembled successfully!")
 
     if device.type == "cuda":
