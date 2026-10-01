@@ -28,5 +28,5 @@ ehthumbs.db
 Thumbs.db
 
 # Models
-models/*
+# models/* (Commented out so best_model.pth uploads to GitHub)
 !models/.keep
